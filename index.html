@@ -4,10 +4,57 @@
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>Document</title>
-    <script type="text/javascript" src="test.js"></script>
 </head>
+<style>
+:root{
+    --bg1: #fff7fb;
+    /* --bg2: #fff3f8;
+    --accent: #ff7ab6; */
+    --muted: #6b516d;
+    --card: rgba(255,255,255,0.85);
+}
+
+*,
+*::before,
+*::after {
+  margin: 0;
+  padding: 0;
+  box-sizing: inherit;
+}
+
+html {
+  font-size: 62.5%;
+  min-height: 100%;
+}
+
+body {
+  box-sizing: border-box;
+  min-height: 100%;
+  background-color: var(--bg1);
+  color: var(--muted);
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  font-family: sans-serif;
+}
+
+.card {
+  width: 30rem;
+  height: 20rem;
+  background-color: var(--card);
+  margin: 10rem auto;
+  border-radius: 1rem;
+  box-shadow: 0 1rem 2rem rgba(0, 0, 0, 0.2);
+  font-size: 2.5rem;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+
+}
+</style>
 <body>
-    <p style="color: red;">Under construction</p>
-        <button onclick="test()">test</button>
+    <div class="card">
+        Under construction
+    </div>
 </body>
 </html>
