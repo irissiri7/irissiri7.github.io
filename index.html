@@ -1,60 +1,132 @@
 <!DOCTYPE html>
 <html lang="en">
 <head>
-    <meta charset="UTF-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Document</title>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Document</title>
+  <style>
+    :root{
+      --bg1: #fff7fb;
+      --muted: #6b516d;
+      --card: rgba(255,255,255,0.85);
+    }
+
+    *,
+    *::before,
+    *::after {
+      margin: 0;
+      padding: 0;
+      box-sizing: inherit;
+    }
+
+    html {
+      font-size: 62.5%;
+      min-height: 100%;
+    }
+
+    body {
+      box-sizing: border-box;
+      min-height: 100%;
+      background-color: var(--bg1);
+      color: var(--muted);
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      font-family: sans-serif;
+      overflow: hidden; /* prevent scrollbars with bubbles */
+    }
+
+    .card {
+      width: 30rem;
+      height: 20rem;
+      background-color: var(--card);
+      margin: 10rem auto;
+      border-radius: 1rem;
+      box-shadow: 0 1rem 2rem rgba(0, 0, 0, 0.2);
+      font-size: 2.5rem;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      position: relative;
+      z-index: 1;
+    }
+
+    canvas {
+      position: fixed;
+      inset: 0;
+      z-index: 0;
+      pointer-events: none;
+    }
+  </style>
 </head>
-<style>
-:root{
-    --bg1: #fff7fb;
-    /* --bg2: #fff3f8;
-    --accent: #ff7ab6; */
-    --muted: #6b516d;
-    --card: rgba(255,255,255,0.85);
-}
-
-*,
-*::before,
-*::after {
-  margin: 0;
-  padding: 0;
-  box-sizing: inherit;
-}
-
-html {
-  font-size: 62.5%;
-  min-height: 100%;
-}
-
-body {
-  box-sizing: border-box;
-  min-height: 100%;
-  background-color: var(--bg1);
-  color: var(--muted);
-  display: flex;
-  align-items: center;
-  justify-content: center;
-  font-family: sans-serif;
-}
-
-.card {
-  width: 30rem;
-  height: 20rem;
-  background-color: var(--card);
-  margin: 10rem auto;
-  border-radius: 1rem;
-  box-shadow: 0 1rem 2rem rgba(0, 0, 0, 0.2);
-  font-size: 2.5rem;
-  display: flex;
-  align-items: center;
-  justify-content: center;
-
-}
-</style>
 <body>
-    <div class="card">
-        Under construction
-    </div>
+  <canvas id="bubbles"></canvas>
+
+  <div class="card">
+    Under construction
+  </div>
+
+  <script>
+    const canvas = document.getElementById("bubbles");
+    const ctx = canvas.getContext("2d");
+
+    function resize() {
+      canvas.width = window.innerWidth;
+      canvas.height = window.innerHeight;
+    }
+    window.addEventListener("resize", resize);
+    resize();
+
+    class Bubble {
+      constructor() { this.reset(true); }
+      reset(startBottom = false) {
+        this.r = rand(20, 70);
+        this.x = rand(0, canvas.width);
+        this.y = startBottom ? rand(canvas.height, canvas.height * 2) : rand(0, canvas.height);
+        this.speed = rand(0.2, 0.6);
+        this.drift = rand(-0.2, 0.2);
+        this.hue = rand(180, 300);
+        this.opacity = rand(0.05, 0.18);
+      }
+      update() {
+        this.y -= this.speed;
+        this.x += this.drift;
+        if (this.y < -this.r) this.reset(true);
+      }
+      draw(ctx) {
+        const g = ctx.createRadialGradient(
+          this.x - this.r*0.3, this.y - this.r*0.3, this.r*0.1,
+          this.x, this.y, this.r
+        );
+        g.addColorStop(0, `hsla(${this.hue}, 90%, 95%, ${this.opacity*2})`);
+        g.addColorStop(0.7, `hsla(${this.hue+40}, 70%, 70%, ${this.opacity})`);
+        g.addColorStop(1, `rgba(255,255,255,0.05)`);
+
+        ctx.fillStyle = g;
+        ctx.beginPath();
+        ctx.arc(this.x, this.y, this.r, 0, Math.PI*2);
+        ctx.fill();
+
+        ctx.beginPath();
+        ctx.arc(this.x - this.r*0.3, this.y - this.r*0.4, this.r*0.25, 0, Math.PI*2);
+        ctx.fillStyle = `rgba(255,255,255,${this.opacity*2})`;
+        ctx.fill();
+      }
+    }
+
+    const bubbles = Array.from({length: 35}, () => new Bubble());
+
+    function animate() {
+      ctx.clearRect(0, 0, canvas.width, canvas.height);
+      for (const b of bubbles) {
+        b.update();
+        b.draw(ctx);
+      }
+      requestAnimationFrame(animate);
+    }
+    animate();
+
+    function rand(min, max) { return Math.random() * (max - min) + min; }
+  </script>
 </body>
 </html>
